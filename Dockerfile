@@ -1,17 +1,17 @@
-version: '3.9'
+FROM golang:1.22.5 AS builder
 
-services:
-  db:
-    image: postgres
-    restart: always
-    ports:
-        - 5431:5432
-    environment:
-      POSTGRES_PASSWORD: admin21
-      POSTGRES_USER: postgres
-      POSTGRES_DB: access_cloude
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8091:8080
+WORKDIR /app
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+COPY . .
+
+RUN go build -o /access ./cmd
+
+COPY ./locale.yaml /app/locale.yaml
+
+WORKDIR /
+
+CMD ["/access"]

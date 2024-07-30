@@ -22,7 +22,7 @@ type Config struct {
 }
 
 func GetConfigs() (*Config, error) {
-	file, err := os.ReadFile("./locale.yaml")
+	file, err := os.ReadFile("/app/locale.yaml")
 	if err != nil {
 		return nil, err
 	}
