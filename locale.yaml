@@ -1,0 +1,10 @@
+database:
+  host: localhost
+  port: 5431
+  user: postgres
+  password: admin21
+  database: access_cloude
+  salt: LainIsNotReal
+chi-server:
+  host: localhost
+  port: 8080

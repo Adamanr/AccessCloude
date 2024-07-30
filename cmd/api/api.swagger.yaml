@@ -1,0 +1,329 @@
+openapi: 3.0.3
+info:
+  title: Swagger для проекта CourseHub
+  description:
+    Основная документация по Swagger.
+  contact:
+    url: https://t.me/CringeINC
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: chi documentation =)
+  url: https://go-chi.io/#/
+tags:
+  - name: users
+    description: Список операций с пользователями
+  - name: health
+    description: pong
+paths:
+  /pong:
+    get:
+      tags:
+        - health
+      summary: pong
+      operationId: pong
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+  /users:
+    get:
+      tags:
+        - users
+      summary: List all users
+      operationId: getUsers
+      parameters:
+        - name: limit
+          in: query
+          description: Параметр для получения определенное количество курсов
+          required: false
+          schema:
+            type: integer
+            example: "limit=10"
+        - name: role
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Lain
+                - admin
+                - member
+                - teacher
+                - mentor
+              example: "role=admin"
+        - name: orderBy
+          in: query
+          description:  Параметр для сортировки курсов по указанному полю и методу сортировки
+          required: false
+          schema:
+            type: string
+            example: "orderBy=author:desc"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/Users'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/InternalServiceError'
+  /user/{id}:
+    get:
+      tags:
+        - users
+      summary: Get user by id
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          description: 'description regarding param2'
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/User'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/InternalServiceError'
+    put:
+      tags:
+        - users
+      summary: Update user
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: 'description regarding param2'
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/User'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/InternalServiceError'
+    delete:
+      tags:
+        - users
+      summary: Delete user
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: 'description regarding param2'
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/User'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/InternalServiceError'
+  /users/avatar:
+    post:
+      tags:
+        - users
+      summary: Upload avatar
+      operationId: uploadUserAvatar
+      requestBody:
+        description:  'avatar url path'
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {
+                  type: string, format: binary
+                }
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/InternalServiceError'
+  /users/sign_up:
+    post:
+      tags:
+        - users
+      summary: Create user
+      operationId: userSignUp
+      requestBody:
+        description:  'Sign up new user'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref:  '#/components/schemas/UserSignUp'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/User'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/InternalServiceError'
+  /users/sign_in:
+    post:
+      tags:
+        - users
+      summary: Authorize user
+      operationId: userSignIn
+      requestBody:
+        description:  'Sign in new user'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref:  '#/components/schemas/UserSignIn'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/User'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/InternalServiceError'
+components:
+  schemas:
+    InternalServiceError:
+      type: object
+      properties:
+        message:
+          example: Internal server error
+        code:
+          type: integer
+          example: Internal server error
+    UserSignUp:
+      type: object
+      properties:
+        login:
+          type: string
+          example: John
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '123'
+        notification:
+          type: boolean
+          example: true
+    UserSignIn:
+      type: object
+      properties:
+        login:
+          type: string
+          example: John
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '123'
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        login:
+          type: string
+          example: theUser
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+        avatar_id:
+          type: string
+          example: '12345'
+        description:
+          type: string
+          example: Java is the best
+        role:
+          type: array
+          items:
+            type: string
+            enum:
+              - lain
+              - admin
+              - member
+              - mentor
+              - teacher
+        created_at:
+          type: string
+          example: '2018-01-01'
+        updated_at:
+          type: string
+          example: '2018-01-01'
+      required:
+        - login
+        - email
+        - role
+        - avatar_id
+      xml:
+        name: user
+    Users:
+      description: List of user object
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
+   
